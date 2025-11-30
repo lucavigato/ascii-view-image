@@ -45,10 +45,14 @@ Prints the converted image to standard output.
 ./ascii-view images/photo.jpg
 ```
 
-### 2. Export to Image (`--export`)
+### 2. Export to Image (`--export` or `-e`)
 Saves the output to a PNG file.
 ```bash
-./ascii-view images/photo.jpg --export --output result.png
+./ascii-view images/photo.jpg -e
+```
+Optionally, you can select the name of the exported file using the flag `-o` or `--output`
+```bash
+./ascii-view images/photo.jpg -e -o result.png
 ```
 
 ### 3. Scaling / Zoom (`--scale`)
