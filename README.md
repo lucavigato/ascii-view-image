@@ -1,85 +1,91 @@
-# ASCII View
+# ascii-view (Enhanced Fork)
 
-A command-line tool that displays images as colorized ASCII art in the terminal.
+**ascii-view** is a command-line tool written in C that converts images into ASCII art. 
 
-![Cover photo](./cover-photos/coverphoto-1.jpg)
+Originally designed to simply print colored characters to the terminal, this fork transforms it into a powerful **ASCII Art Image Generator**. You can now export high-resolution PNGs, create "Pixel Art" style upscales, and control the exact output dimensions, all while keeping the ability to view the result in your console.
 
 ## Features
-- **Multi-format support**: Supports JPEG, PNG, BMP, and other common image formats via [stb_image](https://github.com/nothings/stb)
-- **Color terminal output**: Uses ANSI color codes for colors
-- **Intelligent resizing**: Scales images to fit the terminal's constrained dimensions while maintaining aspect ratio
-- **Terminal-optimized**: Adjusts for typical terminal font aspect ratios (characters are taller than they are wide)
-- **Edge enhancement**: Uses Sobel filtering to enhance edges
+
+*   **Console Preview**: View images as colored ASCII text directly in your terminal.
+*   **High-Quality Export**: Save your ASCII art as **PNG** images with high-quality text rendering (powered by Cairo & Pango).
+*   **Pixel Art Scaling (`--scale`)**: Turn any image into a detailed ASCII mosaic. A scale of 10 means each original pixel becomes a 10x10 block containing a character.
+*   **Target Resolution (`--dims`)**: Force the output image to be exactly 1920x1080 (or any other size), automatically adjusting the grid density.
+*   **Retro Mode**: Optional 3-bit color palette (8 colors) for a vintage terminal look.
+*   **Edge Detection**: Uses Sobel filters to detect edges and use directional characters (`|`, `/`, `-`, `\`) for better shapes.
+
+## Prerequisites
+
+To build the project, you need a C compiler and the Pango/Cairo development libraries.
+
+**Linux (Debian/Ubuntu):**
+```bash
+sudo apt update
+sudo apt install build-essential pkg-config libcairo2-dev libpango1.0-dev
+```
+
+**Linux (Fedora):**
+```bash
+sudo dnf install gcc make pkgconf-pkg-config cairo-devel pango-devel
+```
 
 ## Building
 
-This project can be built with Make:
+Simply run `make` in the project root:
+
 ```bash
-# Development version
 make
-
-# Release version compiled with optimizations
-make release
 ```
-
-To clean build artifacts:
-```bash
-make clean
-```
-
-Requirements:
-- C99-compatible compiler (GCC, Clang)
-- Make build system
+This will produce the `ascii-view` executable.
 
 ## Usage
 
+### 1. Basic Terminal View
+Prints the converted image to standard output.
 ```bash
-./ascii-view <path/to/image> [OPTIONS]
+./ascii-view images/photo.jpg
 ```
 
-### Options
-
-- `-mw <width>`: Maximum width in characters (default: terminal width OR 64)
-- `-mh <height>`: Maximum height in characters (default: terminal height OR 48)
-- `-et <threshold>`: Edge detection threshold, range: 0.0 - 4.0 (default 4.0, disabled)
-- `-cr <ratio>`: Height-to-width ratio for characters (default 2.0)
-- `--retro-colors`: Uses 3-bit colors for pixels.
-
-### Examples
-
+### 2. Export to Image (`--export`)
+Saves the output to a PNG file.
 ```bash
-# Basic usage with default dimensions
-./ascii-view examples/puffin.jpg
-
-# Specify custom dimensions
-./ascii-view examples/waterfall.jpg -mw 120 -mh 60
-
-# Specify edge threshold
-./ascii-view examples/black-and-white.jpg -et 2.5
-
-# Specify character aspect ratio
-./ascii-view examples/cacti.jpg -cr 1.7
+./ascii-view images/photo.jpg --export --output result.png
 ```
 
-The images in the `examples` directory are via [Unsplash](https://unsplash.com)
+### 3. Scaling / Zoom (`--scale`)
+Great for creating detailed digital art.
+*   `--scale 1`: 1 pixel = 1 character (1x1 render). Keeps original resolution.
+*   `--scale 10`: 1 pixel = 1 character (rendered as 10x10 block). Image size increases by 10x (like a nearest-neighbor zoom).
 
-### Suggestions for getting good looking results
-1. If you make your font size smaller, you can make the pictures larger
-2. The results are limited by your terminal's colour scheme
-3. If you squint your eyes the images look great!
+```bash
+./ascii-view images/icon.png --scale 10 -o icon_ascii.png
+```
 
-![Cover photo](./cover-photos/coverphoto-2.jpg)
+### 4. Fixed Resolution / Wallpaper (`--dims`)
+Forces the output image to a specific resolution. The tool calculates the optimal grid density to fit.
+```bash
+./ascii-view images/wallpaper.jpg --dims 1920x1080 -o wallpaper_hd.png
+```
 
-## How It Works
+### 5. Retro Aesthetic
+Use `--retro-colors` to snap colors to a basic 8-color palette.
+```bash
+./ascii-view images/photo.jpg --retro-colors -e -o retro.png
+```
 
-1. **Image loading**: Uses stb_image to load various image formats
-2. **Aspect ratio correction**: Accounts for terminal character dimensions (typically ~2:1 height to width ratio[^1])
-3. **Area averaging**: When downsampling, averages pixel values in rectangular regions for smooth results
-4. **Color analysis**: Converts RGB pixels to HSV color space to determine:
-   - **Hue**: Maps to ANSI terminal colors (red, green, blue, cyan, magenta, yellow)
-   - **Saturation**: Low saturation pixels display as white
-   - **Value**: Used to calculate brightness for ASCII character selection
-5. **ASCII mapping**: Maps brightness levels to ASCII characters: ` .-=+*x#$&X@`
-6. **Edge enhancement**: Finds edges and angles with a Sobel filter, enhances edges with `_/|\`
+## Options Reference
 
-[^1]: Some terminals support the ability to extract the exact font ratio, but others don't. For the time being we assume a 2:1 ratio, with ability to change it through the `-cr` option.
+| Flag | Description |
+| :--- | :--- |
+| `-w`, `--width <n>` | Set specific width in characters for terminal output. |
+| `-e`, `--export` | Save to file instead of printing to terminal. |
+| `-o`, `--output <file>` | Specify output filename (default: `input_ascii.png`). |
+| `-s`, `--scale <n>` | **Pixel Replacement Mode**: 1 char replaces an NxN block of pixels. |
+| `--dims <WxH>` | **Target Resolution Mode**: Force output to specific pixel dimensions. |
+| `--retro-colors` | Use 3-bit color palette (8 colors). |
+| `--font <name>` | Specify font family for export (default: "DejaVu Sans Mono"). |
+| `--bg-white` | Use white background instead of black. |
+
+## Credits
+
+Based on the original work by [Gouws Xander](https://github.com/gouwsxander/ascii-view).
+Enhanced and refactored by Luca.

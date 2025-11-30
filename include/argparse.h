@@ -1,16 +1,17 @@
-#ifndef MY_ARGPARSE
-#define MY_ARGPARSE
-#include <stdlib.h>
+#ifndef ARGPARSE_H
+#define ARGPARSE_H
 
+#include "image.h" // Per export_options_t
 
-typedef struct {
-    char* file_path;
-    size_t max_width;
-    size_t max_height;
-    double character_ratio;
-    double edge_threshold;
-    int use_retro_colors;
-} args_t;
+struct arguments {
+    char *filename;
+    // Opzioni legacy/core
+    int width; // Larghezza in caratteri (se 0, calcola in base a terminale o opzioni)
+    
+    // Tutte le opzioni di export e configurazione avanzata
+    export_options_t options;
+};
 
-args_t parse_args(int argc, char* argv[]);
+struct arguments parse_args(int argc, char *argv[]);
+
 #endif

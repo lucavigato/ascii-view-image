@@ -1,7 +1,8 @@
-#ifndef MY_PRINT_IMAGE
-#define MY_PRINT_IMAGE
+#ifndef PRINT_IMAGE_H
+#define PRINT_IMAGE_H
+
 #include "image.h"
 
-void print_image(image_t* image, double edge_threshold, int use_retro_colors);
+void print_image(ascii_grid_t* grid);
 
 #endif

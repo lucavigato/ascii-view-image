@@ -58,3 +58,14 @@ dkms.conf
 
 # VSCode
 .vscode
+
+# Custom ignores
+*.png
+*.txt
+backup_src/
+project_context.md
+ascii-to-image
+ascii-exporter
+transform
+images/
+exports/

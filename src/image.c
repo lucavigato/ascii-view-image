@@ -48,6 +48,20 @@ void free_image(image_t* image) {
     }
 }
 
+void free_ascii_grid(ascii_grid_t* grid) {
+    if (grid) {
+        if (grid->cells) {
+            free(grid->cells);
+            grid->cells = NULL;
+        }
+        grid->width = 0;
+        grid->height = 0;
+        // Note: we don't free the struct pointer itself if it was stack allocated, 
+        // but usually we allocate the inner data. If the grid pointer itself is malloc'd
+        // the caller handles that. Here we just clear content.
+    }
+}
+
 
 // Gets pointer to pixel data at index (x, y)
 double* get_pixel(image_t* image, size_t x, size_t y) {
